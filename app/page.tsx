@@ -1,14 +1,15 @@
 "use client";
 import Router from "next/router";
 import Image from "next/image";
-import Homepage from "./homepage";
+import Page from "./dashboard/page";
+
 
 
 export default function Home() {
   return (
    <main>
     <div>
-      <Homepage/>
+      <Page/>
     </div>
    </main>
   );
