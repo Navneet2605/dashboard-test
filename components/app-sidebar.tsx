@@ -1,181 +1,175 @@
-import * as React from "react"
+"use client"
 
-import { SearchForm } from "@/components/search-form"
-import { VersionSwitcher } from "@/components/version-switcher"
+import * as React from "react"
+import {
+  Newspaper,
+  AudioWaveform,
+  Command,
+  GalleryVerticalEnd,
+  ScrollText,
+  Cable,
+  Link,
+  Plug,
+  Star,
+  BadgeDollarSign,
+  HeartHandshake,
+  BellRing,
+  MessageSquareDot,
+  Cat
+} from "lucide-react"
+
+import { NavMain } from "@/components/nav-main"
+import { NavProjects } from "@/components/nav-projects"
+import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
 
 // This is sample data.
 const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Amazozn.com",
+      logo: GalleryVerticalEnd,
+      plan: "www.amazon.com",
+    },
+    {
+      name: "Flipkart.in.",
+      logo: AudioWaveform,
+      plan: "www.flipkart.in",
+    },
+    {
+      name: "Myntra.in",
+      logo: Command,
+      plan: "www.myntra.in",
+    },
+  ],
   navMain: [
     {
-      title: "Getting Started",
+      title: "Article",
       url: "#",
+      icon: ScrollText,
+      isActive: true,
       items: [
         {
-          title: "Installation",
+          title: "Create Article",
           url: "#",
         },
         {
-          title: "Project Structure",
+          title: "Generate Article",
           url: "#",
         },
+        {
+          title: "Keyword Project",
+          url: "#",
+        },
+        {
+          title: "AI Keyword to Article",
+          url: "#",
+        },
+         {
+          title: "Steal Competitor Keyword",
+          url: "#",
+        },
+        {
+          title: "Import Keyword from GSC",
+          url: "#",
+        },
+        {
+          title: "Mannual Keyword to Article",
+          url: "#",
+        },
+         {
+          title: "Bulk Keyword to Article",
+          url: "#",
+        },
+        {
+          title: "Longtail Keyword to Article",
+          url: "#",
+        },
+        {
+          title: "Article Setting",
+          url: "#",
+        }
       ],
+    },
+  ],
+  projects: [
+    {
+      name: "Auto Blogs",
+      url: "#",
+      icon: Newspaper,
     },
     {
-      title: "Building Your Application",
+      name: "Internal Links",
       url: "#",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-        {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Rendering",
-          url: "#",
-        },
-        {
-          title: "Caching",
-          url: "#",
-        },
-        {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
-        },
-      ],
+      icon: Cable,
     },
     {
-      title: "API Reference",
+      name: "Free Backlinks",
       url: "#",
-      items: [
-        {
-          title: "Components",
-          url: "#",
-        },
-        {
-          title: "File Conventions",
-          url: "#",
-        },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
-      ],
+      icon: Link,
     },
     {
-      title: "Architecture",
+      name: "Integreation",
       url: "#",
-      items: [
-        {
-          title: "Accessibility",
-          url: "#",
-        },
-        {
-          title: "Fast Refresh",
-          url: "#",
-        },
-        {
-          title: "Next.js Compiler",
-          url: "#",
-        },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
-      ],
+      icon: Plug,
     },
+    {
+      name: "Subscription",
+      url: "#",
+      icon: Star,
+    },
+    {
+      name: "Affiliate Program",
+      url: "#",
+      icon: BadgeDollarSign,
+    },
+    {
+      name: "Help Centre",
+      url: "#",
+      icon: HeartHandshake,
+    },
+    {
+      name: "Updates",
+      url: "#",
+      icon: BellRing,
+    },
+    {
+      name: "Live Chat Support",
+      url: "#",
+      icon: MessageSquareDot,
+    },
+    {
+      name: "Profile",
+      url: "#",
+      icon: Cat,
+    }
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props}>
+    <Sidebar collapsible="icon" {...props}>
+        
       <SidebarHeader>
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
-        <SearchForm />
+        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <NavMain items={data.navMain}/>
+        <NavProjects projects={data.projects}  />
       </SidebarContent>
+      {/* <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   )
