@@ -10,8 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
-
+import { Button } from "@/components/ui/button"; // Assuming you have a Button component
 const articles_datas = [
   {
     id: 1,
@@ -194,8 +193,14 @@ const articles_datas = [
     publish: true,
   },
 ];
+
+const ITEMS_PER_PAGE = 5; // You can adjust this value
+
 export function TableDemo() {
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(articles_datas.length / ITEMS_PER_PAGE);
 
   const handleRowToggle = (itemId: number) => {
     setSelectedItems((prevSelectedItems) => {
@@ -222,47 +227,82 @@ export function TableDemo() {
     articles_datas.length > 0 &&
     selectedItems.size === articles_datas.length;
 
+  const currentTableData = articles_datas.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const nextPage = () => {
+    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
+  };
+
+  const prevPage = () => {
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  };
+
   return (
-    <Table>
-      <TableCaption>A list of your articles.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>
-            <input
-              type="checkbox"
-              checked={isAllItemsSelected}
-              onChange={handleSelectAllToggle}
-              aria-label="Select all rows"
-            />
-          </TableHead>
-          <TableHead className="w-[100px]">Article Title</TableHead>
-          <TableHead>Keyword [Traffic]</TableHead>
-          <TableHead>Words</TableHead>
-          <TableHead className="text-right">Created On</TableHead>
-          <TableHead>Action</TableHead>
-          <TableHead>Publish</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {articles_datas.map((data) => (
-          <TableRow key={data.id} data-state={selectedItems.has(data.id) ? "selected" : ""}>
-            <TableCell>
+    <div>
+      <Table>
+        <TableCaption>
+          A list of your articles. Page {currentPage} of {totalPages}.
+        </TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>
               <input
                 type="checkbox"
-                checked={selectedItems.has(data.id)}
-                onChange={() => handleRowToggle(data.id)}
-                aria-labelledby={`select-row-${data.id}`}
+                checked={isAllItemsSelected}
+                onChange={handleSelectAllToggle}
+                aria-label="Select all rows in the table"
               />
-            </TableCell>
-            <TableCell className="font-medium" id={`select-row-${data.id}`}>{data.title}</TableCell>
-            <TableCell>{data.keyword_traffic}</TableCell>
-            <TableCell>{data.words}</TableCell>
-            <TableCell className="text-right">{data.created_on}</TableCell>
-            <TableCell><Button variant="outline" className="text-green-600 border-green-400">{data.action}</Button></TableCell>
-            <TableCell>{data.publish ? "Yes" : "No"}</TableCell>
+            </TableHead>
+            <TableHead className="w-[100px]">Article Title</TableHead>
+            <TableHead>Keyword [Traffic]</TableHead>
+            <TableHead>Words</TableHead>
+            <TableHead className="text-right">Created On</TableHead>
+            <TableHead>Action</TableHead>
+            <TableHead>Publish</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {currentTableData.map((data) => (
+            <TableRow key={data.id} data-state={selectedItems.has(data.id) ? "selected" : ""}>
+              <TableCell>
+                <input
+                  type="checkbox"
+                  checked={selectedItems.has(data.id)}
+                  onChange={() => handleRowToggle(data.id)}
+                  aria-labelledby={`select-row-${data.id}`}
+                />
+              </TableCell>
+              <TableCell className="font-medium" id={`select-row-${data.id}`}>{data.title}</TableCell>
+              <TableCell>{data.keyword_traffic}</TableCell>
+              <TableCell>{data.words}</TableCell>
+              <TableCell className="text-right">{data.created_on}</TableCell>
+              <TableCell>{data.action}</TableCell>
+              <TableCell>{data.publish ? "Yes" : "No"}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={prevPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
   );
 }
