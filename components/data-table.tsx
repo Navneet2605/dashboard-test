@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"; // Assuming you have a Button component
+import { Input } from "./ui/input";
 const articles_datas = [
   {
     id: 1,
@@ -68,7 +69,8 @@ const articles_datas = [
   },
   {
     id: 7,
-    title: "Backlinks 101: What are backlinks and why they’re important [Free template]",
+    title:
+      "Backlinks 101: What are backlinks and why they’re important [Free template]",
     keyword_traffic: "backlinks [8100]",
     words: 2281,
     created_on: "--",
@@ -224,8 +226,7 @@ export function TableDemo() {
   };
 
   const isAllItemsSelected =
-    articles_datas.length > 0 &&
-    selectedItems.size === articles_datas.length;
+    articles_datas.length > 0 && selectedItems.size === articles_datas.length;
 
   const currentTableData = articles_datas.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -242,6 +243,13 @@ export function TableDemo() {
 
   return (
     <div>
+      <div className="w-full mt-12 flex justify-center mb-6">
+        <Input
+          type="search"
+          placeholder="Search for Title & Keyword"
+          className="w-[400px]"
+        />
+      </div>
       <Table>
         <TableCaption>
           A list of your articles. Page {currentPage} of {totalPages}.
@@ -266,7 +274,10 @@ export function TableDemo() {
         </TableHeader>
         <TableBody>
           {currentTableData.map((data) => (
-            <TableRow key={data.id} data-state={selectedItems.has(data.id) ? "selected" : ""}>
+            <TableRow
+              key={data.id}
+              data-state={selectedItems.has(data.id) ? "selected" : ""}
+            >
               <TableCell>
                 <input
                   type="checkbox"
@@ -275,7 +286,9 @@ export function TableDemo() {
                   aria-labelledby={`select-row-${data.id}`}
                 />
               </TableCell>
-              <TableCell className="font-medium" id={`select-row-${data.id}`}>{data.title}</TableCell>
+              <TableCell className="font-medium" id={`select-row-${data.id}`}>
+                {data.title}
+              </TableCell>
               <TableCell>{data.keyword_traffic}</TableCell>
               <TableCell>{data.words}</TableCell>
               <TableCell className="text-right">{data.created_on}</TableCell>

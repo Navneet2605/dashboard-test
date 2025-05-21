@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 // import { DataTable } from "@/components/data-table"
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import {
   SidebarInset,
   SidebarProvider,
@@ -58,13 +57,6 @@ export default function Page() {
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
-            </div>
-            <div className="w-full mt-12 flex justify-center">
-              <Input
-                type="search"
-                placeholder="Search for Title & Keyword"
-                className="w-[400px]"
-              />
             </div>
             <div className="tavle mt-6">
                 <TableDemo/>
