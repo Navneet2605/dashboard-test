@@ -1,4 +1,4 @@
-"use client"; // Required for useState and useEffect
+"use client";
 
 import { useState, useMemo, useEffect } from "react";
 import {
@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button"; // Assuming you have a Button component
-import { Input } from "@/components/ui/input"; // Assuming you have an Input component
+import { Button } from "@/components/ui/button"; 
+import { Input } from "@/components/ui/input"; 
 const articles_datas = [
   {
     id: 1,
@@ -212,7 +212,6 @@ export function TableDemo() {
     );
   }, [searchTerm]);
 
-  // Reset to page 1 when search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
@@ -233,9 +232,8 @@ export function TableDemo() {
 
   const handleSelectAllToggle = () => {
     if (selectedItems.size === filteredArticles.length && filteredArticles.length > 0) {
-      setSelectedItems(new Set()); // Deselect all (filtered)
+      setSelectedItems(new Set());
     } else {
-      // Select all (filtered)
       setSelectedItems(new Set(filteredArticles.map((item) => item.id)));
     }
   };

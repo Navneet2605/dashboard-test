@@ -59,7 +59,7 @@ export default function Page() {
               </Tabs>
             </div>
             <div className="tavle mt-6">
-                <TableDemo/>
+              <TableDemo />
             </div>
           </div>
         </div>
