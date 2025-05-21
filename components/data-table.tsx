@@ -1,6 +1,6 @@
-"use client"; // Required for useState
+"use client"; // Required for useState and useEffect
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"; // Assuming you have a Button component
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input"; // Assuming you have an Input component
 const articles_datas = [
   {
     id: 1,
@@ -69,8 +69,7 @@ const articles_datas = [
   },
   {
     id: 7,
-    title:
-      "Backlinks 101: What are backlinks and why they’re important [Free template]",
+    title: "Backlinks 101: What are backlinks and why they’re important [Free template]",
     keyword_traffic: "backlinks [8100]",
     words: 2281,
     created_on: "--",
@@ -196,13 +195,29 @@ const articles_datas = [
   },
 ];
 
-const ITEMS_PER_PAGE = 5; // You can adjust this value
-
+const ITEMS_PER_PAGE = 5;
 export function TableDemo() {
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const totalPages = Math.ceil(articles_datas.length / ITEMS_PER_PAGE);
+  const filteredArticles = useMemo(() => {
+    if (!searchTerm) {
+      return articles_datas;
+    }
+    return articles_datas.filter(
+      (article) =>
+        article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.keyword_traffic.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
+
+  // Reset to page 1 when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE);
 
   const handleRowToggle = (itemId: number) => {
     setSelectedItems((prevSelectedItems) => {
@@ -217,18 +232,19 @@ export function TableDemo() {
   };
 
   const handleSelectAllToggle = () => {
-    if (selectedItems.size === articles_datas.length) {
-      setSelectedItems(new Set()); // Deselect all
+    if (selectedItems.size === filteredArticles.length && filteredArticles.length > 0) {
+      setSelectedItems(new Set()); // Deselect all (filtered)
     } else {
-      // Select all
-      setSelectedItems(new Set(articles_datas.map((item) => item.id)));
+      // Select all (filtered)
+      setSelectedItems(new Set(filteredArticles.map((item) => item.id)));
     }
   };
 
-  const isAllItemsSelected =
-    articles_datas.length > 0 && selectedItems.size === articles_datas.length;
+  const isAllFilteredItemsSelected =
+    filteredArticles.length > 0 &&
+    selectedItems.size === filteredArticles.length;
 
-  const currentTableData = articles_datas.slice(
+  const currentTableData = filteredArticles.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -243,25 +259,28 @@ export function TableDemo() {
 
   return (
     <div>
-      <div className="w-full mt-12 flex justify-center mb-6">
+      <div className="flex items-center py-4 justify-center">
         <Input
-          type="search"
-          placeholder="Search for Title & Keyword"
-          className="w-[400px]"
+          placeholder="Search articles..."
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          className="max-w-sm"
         />
       </div>
       <Table>
         <TableCaption>
           A list of your articles. Page {currentPage} of {totalPages}.
+          {searchTerm && ` (Filtered from ${articles_datas.length} total articles)`}
         </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>
               <input
                 type="checkbox"
-                checked={isAllItemsSelected}
+                checked={isAllFilteredItemsSelected}
                 onChange={handleSelectAllToggle}
-                aria-label="Select all rows in the table"
+                aria-label="Select all currently visible rows"
+                disabled={filteredArticles.length === 0}
               />
             </TableHead>
             <TableHead className="w-[100px]">Article Title</TableHead>
@@ -273,29 +292,32 @@ export function TableDemo() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentTableData.map((data) => (
-            <TableRow
-              key={data.id}
-              data-state={selectedItems.has(data.id) ? "selected" : ""}
-            >
-              <TableCell>
-                <input
-                  type="checkbox"
-                  checked={selectedItems.has(data.id)}
-                  onChange={() => handleRowToggle(data.id)}
-                  aria-labelledby={`select-row-${data.id}`}
-                />
+          {currentTableData.length > 0 ? (
+            currentTableData.map((data) => (
+              <TableRow key={data.id} data-state={selectedItems.has(data.id) ? "selected" : ""}>
+                <TableCell>
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.has(data.id)}
+                    onChange={() => handleRowToggle(data.id)}
+                    aria-labelledby={`select-row-${data.id}`}
+                  />
+                </TableCell>
+                <TableCell className="font-medium" id={`select-row-${data.id}`}>{data.title}</TableCell>
+                <TableCell>{data.keyword_traffic}</TableCell>
+                <TableCell>{data.words}</TableCell>
+                <TableCell className="text-right">{data.created_on}</TableCell>
+                <TableCell>{data.action}</TableCell>
+                <TableCell>{data.publish ? "Yes" : "No"}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="h-24 text-center">
+                No results found.
               </TableCell>
-              <TableCell className="font-medium" id={`select-row-${data.id}`}>
-                {data.title}
-              </TableCell>
-              <TableCell>{data.keyword_traffic}</TableCell>
-              <TableCell>{data.words}</TableCell>
-              <TableCell className="text-right">{data.created_on}</TableCell>
-              <TableCell>{data.action}</TableCell>
-              <TableCell>{data.publish ? "Yes" : "No"}</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
       <div className="flex items-center justify-end space-x-2 py-4">
@@ -303,7 +325,7 @@ export function TableDemo() {
           variant="outline"
           size="sm"
           onClick={prevPage}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || totalPages === 0}
         >
           Previous
         </Button>
@@ -311,7 +333,7 @@ export function TableDemo() {
           variant="outline"
           size="sm"
           onClick={nextPage}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || totalPages === 0}
         >
           Next
         </Button>
